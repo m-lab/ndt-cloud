@@ -92,6 +92,19 @@ SHOULD NOT close the TCP connection immediately, so that the server can
 close it first. This allows to reuse ports more efficiently on the
 server because we avoid the `TIME_WAIT` TCP state.
 
+### The download subtest
+
+During the download subtest, the server MUST send textual measurement messages
+containing measurements and binary messages to generate network load. The
+client MAY send measurements during the download.
+
+### The upload subtest
+
+During the upload subtest, the client MUST send binary messages to generate
+network load. The server MAY send back textual messages containing measurements
+collected from its point of view. The client MAY additionally choose to send
+textual messages containing measurements to the server.
+
 ## Stopping the transfer earlier using BBR
 
 If TCP BBR is available, a compliant server MAY choose to enable it
