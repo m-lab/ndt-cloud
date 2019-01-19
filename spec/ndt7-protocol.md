@@ -138,7 +138,7 @@ using Textual WebSocket messages. Such JSON measurements have the following
 structure:
 
 ```json
-{
+[{
   "app_info": {
     "num_bytes": 17.0,
   },
@@ -151,11 +151,10 @@ structure:
     "rtt_var": 123.4,
     "smoothed_rtt": 567.8
   }
-}
+}]
 ```
 
 Where:
-
 
 - `app_info` is an _optional_ JSON object only included in the measurement
   when an application-level measurement is available:
@@ -187,6 +186,11 @@ Where:
 
 The reason why we always use `float64` (i.e. `double`) for numeric variables is
 that this allows also 32 bit systems to handle such variables easily.
+
+Note that, since v0.7.0 of this specification, the message is a _vector_ of
+_objects_ rather than a single object. This change has been implemented so
+that several measurements could be batched and send to the other endpoint in
+a measurement period of 250 milliseconds.
 
 # Reference implementation
 
