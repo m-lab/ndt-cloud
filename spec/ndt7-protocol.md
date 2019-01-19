@@ -62,12 +62,18 @@ NOT be smaller than 1 << 17 bytes.
 
 Both textual and binary WebSocket messages are allowed. Textual WebSocket
 messages will contain serialised JSON structures containing measurements
-results (see below). When downloading, the server is expected to send
-measurement to the client, and when uploading, conversely, the client is
-expected to send measurements to the server. Both parties SHOULD NOT
-send measurement results when they're not expected to. Measurements SHOULD
-NOT be sent more frequently than every 250 ms, to avoid generating too
-much unnecessary processing load on the receiver.
+results (see below). Both the client and the server MAY send measurements
+messages during any subtest. Upon receiving an unexpected measurement
+message, a party SHOULD discard such message and SHOULD continue
+processing. However, measurements SHOULD NOT be sent more frequently than
+every 250 ms, to avoid generating too much unnecessary processing load
+on the receiver. A party that is receiving more than a measurement message
+every 250 ms MAY close the WebSocket connection.
+
+Network load is generated using binary WebSocket messages carrying a
+random payload. A client SHOULD send binary messages during the
+upload subtest, and SHOULD be prepared to receive and discard binary
+messages during the download subtest.
 
 To generate network load, the party that is currently sending (i.e. the
 server during a download subtest) MUST send, in addition to textual
