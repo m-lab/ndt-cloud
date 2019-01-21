@@ -71,10 +71,24 @@ textual messages to the server. Also, during the download subtest, a client
 MAY send measurement messages to the server. Likewise, during the upload
 subtest, a server MAY send measurement messages to the client.
 
+A measurement message flowing in the same direction of a binary message is
+an in-flow measurement message. Measurement messages following in the
+opposite direction are counterflow messages. That is, during a download
+subtest, measurement messages sent by the server are in flow; those sent by
+the client are counterflow.
+
 Textual messages MUST NOT be sent more frequently than every 250 ms. This is to
 avoid generating too much JSON processing load on the receiver. A party that
 receives more than a textual measurement message every 250 ms MAY choose to
 close the WebSocket connection immediately.
+
+The specification of a measurement message is such that a textual message
+could contain zero or more measurements. No measurement message SHOULD
+contain zero measurements. Counterflow measurement messages MUST contain
+exactly one measurement, to avoid creating too much network load in the
+counterflow direction. In flow measurement messages MAY contain more than
+a single measurement, if the measuring party wishes to batch several of
+them into a single message.
 
 The expected transfer time of each subtest is ten seconds (unless BBR
 is used, in which case it may be shorter, as explained below). The sender
@@ -174,7 +188,8 @@ that this allows also 32 bit systems to handle such variables easily.
 Note that, since v0.7.0 of this specification, the message is a _vector_ of
 _objects_ rather than a single object. This change has been implemented so
 that several measurements could be batched and send to the other endpoint in
-a measurement period of 250 milliseconds.
+a measurement period of 250 milliseconds. As mentioned above, only in-flow
+measurement messages MAY contain more than a single measurement.
 
 # Reference implementation
 
