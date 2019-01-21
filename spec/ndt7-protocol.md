@@ -62,24 +62,19 @@ NOT be smaller than 1 << 17 bytes.
 
 Both textual and binary WebSocket messages are allowed. Textual WebSocket
 messages will contain serialised JSON structures containing measurements
-results (see below). Both the client and the server MAY send measurements
-messages during any subtest. Upon receiving an unexpected measurement
-message, a party SHOULD discard such message and SHOULD continue
-processing. However, measurements SHOULD NOT be sent more frequently than
-every 250 ms, to avoid generating too much unnecessary processing load
-on the receiver. A party that is receiving more than a measurement message
-every 250 ms MAY close the WebSocket connection.
+results (see below). Binary messages are used to generate network load. To
+this end, their payload does not matter and SHOULD be random.
 
-Network load is generated using binary WebSocket messages carrying a
-random payload. A client SHOULD send binary messages during the
-upload subtest, and SHOULD be prepared to receive and discard binary
-messages during the download subtest.
+During the download subtest, the server will send binary and textual messages
+to the client. During the upload subtest, the client will send binary and
+textual messages to the server. Also, during the download subtest, a client
+MAY send measurement messages to the server. Likewise, during the upload
+subtest, a server MAY send measurement messages to the client.
 
-To generate network load, the party that is currently sending (i.e. the
-server during a download subtest) MUST send, in addition to textual
-WebSocket messages, binary WebSocket messages carrying a random payload;
-the receiver (i.e. the client during a download subtest) MUST discard
-these messages without processing them.
+Textual messages MUST NOT be sent more frequently than every 250 ms. This is to
+avoid generating too much JSON processing load on the receiver. A party that
+receives more than a textual measurement message every 250 ms MAY choose to
+close the WebSocket connection immediately.
 
 The expected transfer time of each subtest is ten seconds (unless BBR
 is used, in which case it may be shorter, as explained below). The sender
@@ -92,24 +87,13 @@ SHOULD NOT close the TCP connection immediately, so that the server can
 close it first. This allows to reuse ports more efficiently on the
 server because we avoid the `TIME_WAIT` TCP state.
 
-### The download subtest
-
-During the download subtest, the server MUST send textual measurement messages
-containing measurements and binary messages to generate network load. The
-client MAY send measurements during the download.
-
-### The upload subtest
-
-During the upload subtest, the client MUST send binary messages to generate
-network load. The server MAY send back textual messages containing measurements
-collected from its point of view. The client MAY additionally choose to send
-textual messages containing measurements to the server.
-
 ## Stopping the transfer earlier using BBR
 
 If TCP BBR is available, a compliant server MAY choose to enable it
 for the client connection and terminate the download test early when
-it believes that BBR parameters become stable.
+it believes that BBR parameters become stable. A server SHOULD provide
+a negotiation mechanism (out of the scope of this specification) to
+allow clients to opt out of terminating the download earlier.
 
 Client can detect whether BBR is enabled by checking whether the measurement
 returned by the server contains a `bbr_info` field (see below).
