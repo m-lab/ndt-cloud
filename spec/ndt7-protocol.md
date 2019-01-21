@@ -105,9 +105,9 @@ server because we avoid the `TIME_WAIT` TCP state.
 
 If TCP BBR is available, a compliant server MAY choose to enable it
 for the client connection and terminate the download test early when
-it believes that BBR parameters become stable. A server SHOULD provide
-a negotiation mechanism (out of the scope of this specification) to
-allow clients to opt out of terminating the download earlier.
+it believes that BBR parameters become stable. Before v1.0 of this
+spec is out, we'll specify a mechanism allowing a client to opt out
+of terminating the download early.
 
 Client can detect whether BBR is enabled by checking whether the measurement
 returned by the server contains a `bbr_info` field (see below).
