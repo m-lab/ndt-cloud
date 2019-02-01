@@ -4,7 +4,7 @@ This specification describes how ndt-server serializes ndt7 data
 on disk. Other implementations of the ndt7 protocol MAY use other
 data serialization formats.
 
-This is version v0.2.0 of the data-format specification.
+This is version v0.1.0 of the data-format specification.
 
 For each subtest, ndt7 writes on the current working directory a Gzip
 compressed JSONL file (i.e. a file where each line is a JSON). The file
@@ -58,14 +58,15 @@ JSON object containing the following keys:
 - `"origin"`: a `string` indicating whether this is a measurement performed
   by the client or by the server;
 
-- `"measurements"`: a list of objects following the format specified by
-  [ndt7-protocol.md](ndt7-protocol.md) in the "Measurements message" section.
+- `"measurement"`: an `object` containing the fields specified by
+  [ndt7-protocol.md](ndt7-protocol.md) in the "Measurements message" section,
+  except that the "padding" (if any) MUST be removed from the measurement.
 
 A valid measurement JSON could be:
 
 ```JSON
 {
-  "measurements": [{
+  "measurement": {
     "bbr_info": {
       "max_bandwidth": 12345.4,
       "min_rtt": 123.4
@@ -76,7 +77,7 @@ A valid measurement JSON could be:
       "rtt_var": 123.4,
       "smoothed_rtt": 567.8
     }
-  }],
+  },
   "origin": "server"
 }
 ```

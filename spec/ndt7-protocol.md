@@ -68,32 +68,19 @@ this end, their payload does not matter and SHOULD be random.
 During the download subtest, the server will send binary and textual messages
 to the client. During the upload subtest, the client will send binary and
 textual messages to the server. Also, during the download subtest, a client
-MAY send measurement messages to the server. Likewise, during the upload
-subtest, a server MAY send measurement messages to the client.
-
-A measurement message flowing in the same direction of a binary message is
-an in-flow measurement message. Measurement messages following in the
-opposite direction are counterflow messages. That is, during a download
-subtest, measurement messages sent by the server are in flow; those sent by
-the client are counterflow.
+MUST NOT send any messages to the server. Likewise, during the upload
+subtest, a server MUST NOT send any messages to the client.
 
 Textual messages MUST NOT be sent more frequently than every 250 ms. This is to
 avoid generating too much JSON processing load on the receiver. A party that
 receives more than a textual measurement message every 250 ms MAY choose to
 close the WebSocket connection immediately.
 
-The specification of a measurement message is such that a textual message
-could contain zero or more measurements. No measurement message SHOULD
-contain zero measurements. Counterflow measurement messages MUST contain
-exactly one measurement, to avoid creating too much network load in the
-counterflow direction. In flow measurement messages MAY contain more than
-a single measurement, if the measuring party wishes to batch several of
-them into a single message.
-
 The expected transfer time of each subtest is ten seconds (unless BBR
 is used, in which case it may be shorter, as explained below). The sender
-SHOULD stop sending after ten seconds. The receiver MAY close the
-connection if the transfer runs for more than fifteen seconds.
+(i.e. the server during the download subtest) SHOULD stop sending after
+ten seconds. The receiver (i.e. the client during the download subtest) MAY
+close the connection if the elapsed time exceeds fifteen seconds.
 
 When the expected transfer time has expired, the parties SHOULD close
 the WebSocket channel by sending a Close WebSocket frame. The client
@@ -109,7 +96,7 @@ it believes that BBR parameters become stable. Before v1.0 of this
 spec is out, we'll specify a mechanism allowing a client to opt out
 of terminating the download early.
 
-Client can detect whether BBR is enabled by checking whether the measurement
+Clients can detect whether BBR is enabled by checking whether the measurement
 returned by the server contains a `bbr_info` field (see below).
 
 ## Query string parameters
@@ -136,7 +123,7 @@ using Textual WebSocket messages. Such JSON measurements have the following
 structure:
 
 ```json
-[{
+{
   "app_info": {
     "num_bytes": 17.0,
   },
@@ -149,7 +136,7 @@ structure:
     "rtt_var": 123.4,
     "smoothed_rtt": 567.8
   }
-}]
+}
 ```
 
 Where:
@@ -184,12 +171,6 @@ Where:
 
 The reason why we always use `float64` (i.e. `double`) for numeric variables is
 that this allows also 32 bit systems to handle such variables easily.
-
-Note that, since v0.7.0 of this specification, the message is a _vector_ of
-_objects_ rather than a single object. This change has been implemented so
-that several measurements could be batched and send to the other endpoint in
-a measurement period of 250 milliseconds. As mentioned above, only in-flow
-measurement messages MAY contain more than a single measurement.
 
 # Reference implementation
 
