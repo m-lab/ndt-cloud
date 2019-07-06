@@ -18,7 +18,7 @@ script:
     -e TRAVIS=true
     -e COVERALLS_SERVICE_NAME=travis-ci
     ndt-server-test
-- go get github.com/m-lab/etl/...
+- go get -t github.com/m-lab/etl/...
 - go vet github.com/m-lab/etl/...  # Check that we haven't blatently broken etl dependencies.
 - docker build . -f Dockerfile -t m-lab/ndt-server
 
