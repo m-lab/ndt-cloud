@@ -7,6 +7,10 @@
 language: minimal
 dist: xenial
 
+# We build with docker golang-alpine, but we need this for go vet dependency checks.
+go:
+ - 1.12
+
 services:
 - docker
 
