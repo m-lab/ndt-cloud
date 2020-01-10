@@ -117,7 +117,7 @@ func main() {
 
 	platformx.WarnIfNotFullySupported()
 
-	cc := access.Concurrent{
+	cc := access.MaxController{
 		Max: *maxConn,
 	}
 

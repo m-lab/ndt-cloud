@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestConcurrent_Limit(t *testing.T) {
+func TestMaxController_Limit(t *testing.T) {
 	tests := []struct {
 		name         string
 		Max          int64
@@ -37,7 +37,7 @@ func TestConcurrent_Limit(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := &Concurrent{
+			c := &MaxController{
 				Max:     tt.Max,
 				Current: tt.Current,
 			}
@@ -49,15 +49,15 @@ func TestConcurrent_Limit(t *testing.T) {
 			rw := httptest.NewRecorder()
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
 
-			// Simulate HTTP request with the Concurrent.Limit handler.
+			// Simulate HTTP request with the MaxController.Limit handler.
 			h.ServeHTTP(rw, req)
 
 			result := rw.Result()
 			if result.StatusCode != tt.want {
-				t.Errorf("Concurrent.Limit() = %v, want %v", result, tt.want)
+				t.Errorf("MaxController.Limit() = %v, want %v", result, tt.want)
 			}
 			if wasCalled != tt.callExpected {
-				t.Errorf("Concurrent.Limit() called unexpected got = %t, want %t", wasCalled, tt.callExpected)
+				t.Errorf("MaxController.Limit() called unexpected got = %t, want %t", wasCalled, tt.callExpected)
 			}
 		})
 	}
